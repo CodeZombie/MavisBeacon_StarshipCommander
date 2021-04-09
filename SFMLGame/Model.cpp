@@ -15,6 +15,7 @@ Model::Model(std::string model_filename, std::string texture_filename) {
 			loader.LoadedMeshes[0].Vertices[vertexIndex].TextureCoordinate.X,
 			loader.LoadedMeshes[0].Vertices[vertexIndex].TextureCoordinate.Y));
 	}
+
 	if (!texture.loadFromFile(texture_filename))
 	{
 		std::cout << "Could not load texture file " << texture_filename << std::endl;

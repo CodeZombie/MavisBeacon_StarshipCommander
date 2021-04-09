@@ -2,18 +2,19 @@
 #include "SFML/OpenGL.hpp" 
 #include "GL/glut.h"
 #include <iostream> 
-#include "Camera.h"
 #include "MessageTypes.h"
 #include "Message.h"
 #include<string>
-#include "GameDirector.h"
+#include "GameScene.h"
 #include "UserInterface.h"
 #include <string>
 
-GameDirector* gameDirector;
+Node* activeNode;
 
 int main()
 {
+	srand(time(NULL));
+
 	// INITIALIZE THE WINDOW 
 	int width = 1366, height = 900;
 
@@ -34,17 +35,29 @@ int main()
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
 	glDepthMask(GL_TRUE);
+
+	//set up camera & projection matrix
+	Camera::screenWidth = width;
+	Camera::screenHeight = height;
+	Camera::FoV = 90.0f;
+	Camera::projectionNear = 1.0f;
+	Camera::projectionFar = 1500.f;
+
 	glMatrixMode(GL_PROJECTION);
-	glMultMatrixf(glm::value_ptr(glm::perspective(glm::radians(90.f), (GLfloat)width / (GLfloat)height, 1.0f, 1000.f)));
+	glMultMatrixf(glm::value_ptr(Camera::getProjectionMatrix()));
 	//gluPerspective(90.0f, (GLfloat)width / (GLfloat)height, 1.0f, 1000.0f);
 	
 	// Create a clock for measuring time elapsed and delta time   
 
-
-	UserInterface::addFont("press_start", "PressStart.ttf");
-
+	ResourceManager::addFont("PressStart.ttf", "press_start");
+	ResourceManager::addModel("models/StarSparrow01.obj", "StarSparrow_Blue.png", "player_ship");
+	ResourceManager::addModel("models/pyramid.obj", "light_flare_particle.png", "particle_star");
+	ResourceManager::addModel("models/ufo.obj", "ufo_texture.png", "ufo");
+	ResourceManager::addModel("models/asteroid_a.obj", "asteroid.png", "asteroid");
+	ResourceManager::addModel("models/planet.obj", "planet.png", "planet");
+	ResourceManager::addModel("models/plasma_billboard.obj", "space_plasma.png", "plasma");
 	//initialize game director
-	gameDirector = new GameDirector();
+	activeNode = new GameScene();
 
 	//start clocks
 	sf::Clock Clock;
@@ -56,8 +69,15 @@ int main()
 		sf::Event Event;
 		while (window.pollEvent(Event))
 		{
-			if (Event.type == sf::Event::KeyPressed) {
-				gameDirector->KeyPressed(Event.key.code);
+			if (Event.type == sf::Event::Resized) {
+				sf::FloatRect visibleArea(0, 0, Event.size.width, Event.size.height);
+				window.setView(sf::View(visibleArea));
+				Camera::screenWidth = Event.size.width;
+				Camera::screenHeight = Event.size.height;
+				glViewport(0, 0, Event.size.width, Event.size.height);
+			}
+			if (Event.type == sf::Event::TextEntered) {
+				activeNode->onInputEvent(Event);
 			}
 			if (Event.type == sf::Event::Closed)
 				window.close();
@@ -68,7 +88,7 @@ int main()
 		float dt = Clock.restart().asSeconds(); //calculate delta time.
 
 		
-		gameDirector->Update(dt, runtimeClock.getElapsedTime().asMilliseconds());
+		activeNode->update(dt, runtimeClock.getElapsedTime().asMilliseconds());
 		//std::cout << 1/dt << std::endl;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -76,10 +96,10 @@ int main()
 		glEnable(GL_TEXTURE_2D);
 		glDepthMask(GL_TRUE);
 
-		gameDirector->Draw(&window);
+		activeNode->draw(glm::mat4(1.f));
 
 		window.pushGLStates();
-		UserInterface::draw(&window);
+		activeNode->draw2dElements(&window);
 		window.popGLStates();
 		window.display();
 

@@ -14,6 +14,19 @@ Node::~Node() {
 	for (const auto& child : children) {
 		delete child;
 	}
+	for (int i = 0; i < texts.size(); i++)
+	{
+		delete texts[i];
+	}
+
+	for (int i = 0; i < rectangles.size(); i++)
+	{
+		delete rectangles[i];
+	}
+}
+
+void Node::destroy() {
+	toBeDestroyed = true;
 }
 
 void Node::setTargetPosition(glm::vec3 targetPosition) {
@@ -21,6 +34,7 @@ void Node::setTargetPosition(glm::vec3 targetPosition) {
 	this->initialPosition = position;
 	this->targetPosition = targetPosition;
 	this->targetDistance = 0;
+	this->moveToTarget = true;
 }
 
 /*
@@ -39,39 +53,32 @@ glm::mat4 Node::modelMatrix(glm::mat4 parentModel) {
 	return parentModel * model;
 }
 
-glm::vec2 Node::getScreenPosition(Camera* camera) {
+glm::vec2 Node::getScreenPosition() {
 	float u, v;
-	float width = 1366.f;
-	float height = 900.f;
-
 	glm::vec4 newPos = glm::vec4(position.x, position.y, position.z -20, 1.f);
-	glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.f), (GLfloat)width / (GLfloat)height, 1.0f, 1000.f);
-	glm::mat4 viewingMatrix = camera->getViewingMatrix();
+	glm::mat4 projectionMatrix = Camera::getProjectionMatrix();
+	glm::mat4 viewingMatrix = Camera::getViewingMatrix();
 	newPos = projectionMatrix * viewingMatrix * newPos;
 	
 	
 	u = newPos.x / newPos.z;
 	v = newPos.y / newPos.z;
 	v = -v;
-	u = (u + 1.f) * (width / 2.f);
-	v = (v + 1.f) * (height / 2.f );
+	u = (u + 1.f) * (Camera::screenWidth / 2.f);
+	v = (v + 1.f) * (Camera::screenHeight / 2.f );
 
-	if (u > width) {
-		u = width - 32;
+	if (u > Camera::screenWidth) {
+		u = Camera::screenWidth - 8;
 	}
 	if (u < 0) {
 		u = 0;
 	}
-	if (v > height) {
-		v = height - 32;
+	if (v > Camera::screenHeight) {
+		v = Camera::screenHeight - 8;
 	}
 	if (v < 0) {
 		v = 0;
 	}
-
-	//u = (1366 / 10) * (newPos.x + 1.0f) / 2.0f + (1366 / 2);
-	//v = (900 / 10) * (1.0f - ((newPos.y + 1.0f) / 2.0f)) + (900 / 2);
-
 	return glm::vec2(u, v);
 }
 
@@ -107,6 +114,7 @@ void Node::destroyChild(Node* child) {
 	for (int i = 0; i < children.size(); i++) {
 		if (child == children[i]) {
 			delete children[i];
+			children[i] = NULL;
 			children.erase(children.begin() + i);
 			return;
 		}
@@ -116,34 +124,30 @@ void Node::destroyChild(Node* child) {
 	}
 }
 
-void Node::drawChildren(Camera* camera, glm::mat4 parentModel) {
+void Node::draw(glm::mat4 parentModel) {
+	glm::mat4 mm = this->modelMatrix(parentModel);
 	for (const auto& child : children) {
-		child->draw(camera, parentModel);
+		child->draw(mm);
 	}
 }
 
-void Node::sendMessage(int message) {
-
-}
-
-void Node::draw(Camera* camera, glm::mat4 parentModel) {
-	drawChildren(camera, this->modelMatrix(parentModel));
-}
-
 std::vector<Message> Node::update(float dt, float runtime) {
-	
 	std::vector<Message> outputMessages;
 	for (const auto& child : children) {
 		std::vector<Message> messages = child->update(dt, runtime);
 		outputMessages.insert(outputMessages.end(), messages.begin(), messages.end());
 	}
 	if (moveToTarget) {
-		targetDistance += .4f * dt;
-		position.x = smoothstep(initialPosition.x, targetPosition.x, targetDistance);
-		position.y = smoothstep(initialPosition.y, targetPosition.y, targetDistance);
-		position.z = smoothstep(initialPosition.z, targetPosition.z, targetDistance);
+		targetDistance += speed * dt / 3;
+		position.x = MathHelper::smoothstep(initialPosition.x, targetPosition.x, targetDistance);
+		position.y = MathHelper::smoothstep(initialPosition.y, targetPosition.y, targetDistance);
+		position.z = MathHelper::smoothstep(initialPosition.z, targetPosition.z, targetDistance);
 		if (targetDistance >= 1.f) {
 			moveToTarget = false;
+			Message m = Message();
+			m.caller = this;
+			m.type = arrived_at_target;
+			outputMessages.push_back(m);
 		}
 	}
 	else if(moveAlongSpline) {
@@ -153,6 +157,26 @@ std::vector<Message> Node::update(float dt, float runtime) {
 		}
 	}
 
+	if (toBeDestroyed) {
+		Message m = Message();
+		m.caller = this;
+		m.type = destroy_self;
+		outputMessages.push_back(m);
+	}
+
+	return outputMessages;
+}
+
+glm::vec3 Node::getGlobalPosition() {
+	return lastParentMatrix * glm::vec4(position, 1.f);
+}
+
+std::vector<Message> Node::onInputEvent(sf::Event event) {
+	std::vector<Message> outputMessages;
+	for (const auto& child : children) {
+		std::vector<Message> messages = child->onInputEvent(event);
+		outputMessages.insert(outputMessages.end(), messages.begin(), messages.end());
+	}
 	return outputMessages;
 }
 
@@ -187,27 +211,32 @@ std::vector<Message> Node::checkCollision(Node* other) {
 
 std::vector<Node*> Node::getAllChildren() {
 	std::vector<Node*> output;
-
 	output.push_back(this);
-
 	for (int i = 0; i < children.size(); i++) {
 		std::vector<Node*> cc = children[i]->getAllChildren();
 		output.insert(output.end(), cc.begin(), cc.end());
 	}
-
 	return output;
 }
 
-float Node::smoothstep(float edge0, float edge1, float x) {
-	x = clamp(x, 0.f, 1.f);
-	float mu2 = (1.f - cos(x * 3.14159)) / 2.f;
-	return (edge0 * (1.f - mu2) + edge1 * x);
+std::vector<sf::Text*> Node::getTexts() {
+	std::vector<sf::Text*> output;
+	output.insert(output.end(), texts.begin(), texts.end());
+	for (int i = 0; i < children.size(); i++) {
+		std::vector<sf::Text*> childTexts = children[i]->getTexts();
+		output.insert(output.end(), childTexts.begin(), childTexts.end());
+	}
+	return output;
 }
 
-float Node::clamp(float x, float lowerlimit, float upperlimit) {
-	if (x < lowerlimit)
-		x = lowerlimit;
-	if (x > upperlimit)
-		x = upperlimit;
-	return x;
+void Node::draw2dElements(sf::RenderWindow* window) {
+	for (const auto& child : children) {
+		child->draw2dElements(window);
+	}
+	for (int i = 0; i < texts.size(); i++) {
+		window->draw(*texts[i]);
+	}
+	for (int i = 0; i < rectangles.size(); i++) {
+		window->draw(*rectangles[i]);
+	}
 }

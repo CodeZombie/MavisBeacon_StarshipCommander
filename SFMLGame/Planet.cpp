@@ -1,5 +1,5 @@
 #include "Planet.h"
-Planet::Planet() : Node3D(ModelManager::getModel("planet")) {
+Planet::Planet() : Node3D(ResourceManager::getModel("planet")) {
 	setScale(glm::vec3(
 		250,
 		250,

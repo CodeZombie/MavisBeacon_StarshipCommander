@@ -1,17 +1,17 @@
 #include "Node3D.h"
-#include "ModelManager.h"
+#include "ResourceManager.h"
 Node3D::Node3D(Model* model) {
 	this->model = model;
 }
 
-void Node3D::draw(Camera* camera, glm::mat4 parentModel){
-	__super::draw(camera, parentModel);
+void Node3D::draw(glm::mat4 parentModel){
+	__super::draw(parentModel);
 	glm::mat4 mm = modelMatrix(parentModel);
 
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity(); //Reset the transform matrix
-	camera->DefineViewingMatrix(); //Apply the camera matrix
+	Camera::DefineViewingMatrix(); //Apply the camera matrix
 	glMultMatrixf(glm::value_ptr(mm)); //Apply the model matrix (including this model's parent's matrix)	
 
 	//create a light

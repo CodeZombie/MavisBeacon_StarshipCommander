@@ -1,15 +1,12 @@
 #pragma once
 #include "Node.h"
-#include "Model.h"
-class TestShape : public Node
-{
+class Bullet : public Node{
 public:
-	TestShape(Model* model);
+	Bullet(Node* source, Node* target);
 	void draw(glm::mat4 parentModel);
 	std::vector<Message> update(float dt, float runtime);
-	Model* model;
-private:
-
-
+	Node* source;
+	Node* target;
+	float startTime = 0;
 };
 

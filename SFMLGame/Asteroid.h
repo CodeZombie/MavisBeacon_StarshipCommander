@@ -1,6 +1,7 @@
 #pragma once
 #include "Node3D.h"
-#include "ModelManager.h"
+#include "ResourceManager.h"
+#include "MathHelper.h"
 class Asteroid : public Node3D
 {
 public:

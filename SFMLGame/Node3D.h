@@ -5,7 +5,7 @@ class Node3D : public Node
 {
 public:
 	Node3D(Model* model);
-	void draw(Camera* camera, glm::mat4 parentModel);
+	void draw(glm::mat4 parentModel);
 protected:
 	Model* model;
 };

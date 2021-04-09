@@ -161,11 +161,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
-    <ClCompile Include="GameDirector.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Node3D.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Plasma.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="SFMLGame.cpp" />
+    <ClCompile Include="Space.cpp" />
     <ClCompile Include="Spline.cpp" />
     <ClCompile Include="StarField.cpp" />
     <ClCompile Include="TestShape.cpp" />
@@ -182,13 +184,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EnemyManager.h" />
-    <ClInclude Include="GameDirector.h" />
+    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageTypes.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Node3D.h" />
     <ClInclude Include="NodeType.h" />
@@ -198,6 +202,7 @@
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Plasma.h" />
     <ClInclude Include="PlayerShip.h" />
+    <ClInclude Include="Space.h" />
     <ClInclude Include="Spline.h" />
     <ClInclude Include="StarField.h" />
     <ClInclude Include="TestShape.h" />

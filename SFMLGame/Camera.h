@@ -5,17 +5,16 @@
 class Camera
 {
 public:
-	Camera(sf::Vector3f position, sf::Vector3f lookAt);
-	void DefineViewingMatrix();
-	glm::mat4 getViewingMatrix();
-	void Update(float dt, double time);
-	sf::Vector3f position;
-	sf::Vector3f lookAt;
-	sf::Vector3f initialPosition;
-	sf::Vector3f targetPosition;
-	double moveStartTime;
-	void Move(sf::Vector3f pos, double time);
-private:
-	float lerp(float a, float b, float f);
+	static void initialize(sf::Vector3f position, sf::Vector3f lookAt);
+	static void DefineViewingMatrix();
+	static glm::mat4 getViewingMatrix();
+	static glm::mat4 getProjectionMatrix();
+	static sf::Vector3f position;
+	static sf::Vector3f lookAt;
+	static float FoV;
+	static float projectionNear;
+	static float projectionFar;
+	static float screenWidth;
+	static float screenHeight;
 };
 

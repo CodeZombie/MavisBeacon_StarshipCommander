@@ -15,6 +15,7 @@
 #include "NodeType.h"
 #include "Message.h"
 #include "Spline.h"
+#include "MathHelper.h"
 
 class Message;
 
@@ -32,33 +33,38 @@ protected:
 	glm::vec3 targetPosition;
 	glm::vec3 initialPosition;
 	float targetDistance;
+	std::vector<sf::Text*> texts;
+	std::vector<sf::RectangleShape*> rectangles;
 
-	float smoothstep(float edge0, float edge1, float x);
-	float clamp(float x, float lowerlimit, float upperlimit);
+	bool toBeDestroyed = false;
 public:
 	Node();
 	virtual ~Node();
 	glm::vec3 color;
 	NodeType nodeType;
 	Spline* spline;
+	std::vector<sf::Text*> getTexts();
 	bool moveToTarget = false;
 	bool moveAlongSpline = false;
 	void setPosition(glm::vec3 position);
+	glm::vec3 getGlobalPosition();
 	glm::vec3 getPosition();
-	glm::vec2 getScreenPosition(Camera* camera);
+	glm::vec2 getScreenPosition();
 	void setRotationAxis(glm::vec3 rotationAxis);
 	void setTargetPosition(glm::vec3 targetPosition);
 	void setRotation(float rotation);
 	void setScale(glm::vec3 scale);
 	void addChild(Node *child);
 	void destroyChild(Node* child);
+	void destroy();
 	float getOpacity();
-	virtual void draw(Camera* camera, glm::mat4 parentModel);
-	void drawChildren(Camera* camera, glm::mat4 parentModel);
-	virtual void sendMessage(int message);
+	virtual void draw(glm::mat4 parentModel);
 	virtual std::vector<Message> update(float dt, float runtime);
+	virtual std::vector<Message> onInputEvent(sf::Event event);
 	std::vector<Message> checkCollisionGroup(std::vector<Node*> others);
 	std::vector<Message> checkCollision(Node* other);
+
+	void draw2dElements(sf::RenderWindow* window);
 
 	std::vector<Node*> getAllChildren();
 

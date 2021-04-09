@@ -1,6 +1,6 @@
 #pragma once
 #include "Node3D.h"
-#include "ModelManager.h"
+#include "ResourceManager.h"
 class Plasma :
 	public Node3D
 {

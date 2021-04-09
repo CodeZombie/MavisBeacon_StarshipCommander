@@ -13,14 +13,14 @@ std::vector<Message> TestShape::update(float dt, float runtime) {
 	return std::vector<Message>();
 }
 
-void TestShape::draw(Camera* camera, glm::mat4 parentModel) {
+void TestShape::draw(glm::mat4 parentModel) {
 	glm::mat4 mm = modelMatrix(parentModel);
-	drawChildren(camera, mm);
+	draw(mm);
 
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity(); //Reset the transform matrix
-	camera->DefineViewingMatrix(); //Apply the camera matrix
+	Camera::DefineViewingMatrix(); //Apply the camera matrix
 	glMultMatrixf(glm::value_ptr(mm)); //Apply the model matrix (including this model's parent's matrix)	
 
 	//create a light

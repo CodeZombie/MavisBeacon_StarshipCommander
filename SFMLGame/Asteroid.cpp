@@ -1,9 +1,9 @@
 #include "Asteroid.h"
 
 
-Asteroid::Asteroid() : Node3D(ModelManager::getModel("asteroid")) {
-	rotationAxis = glm::vec3(0, 1.f, 0);
-	float s = ((rand() % 10) / 5.f) + 1.f;
+Asteroid::Asteroid() : Node3D(ResourceManager::getModel("asteroid")) {
+	rotationAxis = MathHelper::getRandomDirectionVector();
+	float s = ((rand() % 10) / 3.f) + 2.f;
 	setScale(glm::vec3(s, s, s));
 	speed = ((rand() % 150) + 15.f);
 }
