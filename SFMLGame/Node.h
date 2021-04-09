@@ -30,7 +30,7 @@ protected:
 	std::vector<Node*> children;
 	std::vector<int> collisionGroup;
 	glm::mat4 lastParentMatrix;
-	glm::vec3 targetPosition;
+
 	glm::vec3 initialPosition;
 	float targetDistance;
 	std::vector<sf::Text*> texts;
@@ -43,6 +43,7 @@ public:
 	glm::vec3 color;
 	NodeType nodeType;
 	Spline* spline;
+	std::vector<glm::vec3> targetPositions;
 	std::vector<sf::Text*> getTexts();
 	bool moveToTarget = false;
 	bool moveAlongSpline = false;
@@ -51,10 +52,11 @@ public:
 	glm::vec3 getPosition();
 	glm::vec2 getScreenPosition();
 	void setRotationAxis(glm::vec3 rotationAxis);
-	void setTargetPosition(glm::vec3 targetPosition);
+	void addTargetPosition(glm::vec3 targetPosition);
 	void setRotation(float rotation);
 	void setScale(glm::vec3 scale);
 	void addChild(Node *child);
+	bool moveTowardPoint(glm::vec3 point, float dt);
 	void destroyChild(Node* child);
 	void destroy();
 	float getOpacity();

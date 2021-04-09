@@ -6,33 +6,23 @@ EnemyManager::EnemyManager() : Node::Node(){
 
 std::vector<Message> EnemyManager::update(float dt, float runtime) {
 	std::vector<Message> messages = __super::update(dt, runtime);
-	for (int i = 0; i < messages.size(); i++) {
-		for (int i = 0; i < messages.size(); i++) {
-			if (messages[i].type == destroy_self && messages[i].caller == activeTarget) {
-				activeTarget = NULL;
-			}
-		}
-	}
-
 	if (children.size() == 0) {
 		createEnemies();
 	}
-
-	//std::cout << activeTarget << std::endl;
 	return messages;
 }
 
 void EnemyManager::createEnemies() {
-	createEnemy("computer", glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
-	createEnemy("thermometer", glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
-	createEnemy("rhododendron", glm::vec3(0, 200, -300), glm::vec3(0, 10.f, -12.f));
+	createEnemy("a", glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
+	createEnemy("b", glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
+	createEnemy("c", glm::vec3(0, 200, -300), glm::vec3(0, 10.f, -12.f));
 }
 
 void EnemyManager::createEnemy(std::string word, glm::vec3 startPosition, glm::vec3 targetPosition) {
 	UFO* ufo = new UFO(word);
 	ufo->setPosition(startPosition);
-	ufo->setTargetPosition(targetPosition);
-	ufo->moveToTarget = true;
+	ufo->addTargetPosition(targetPosition);
+	//ufo->moveToTarget = true;
 	addChild(ufo);
 }
 
@@ -60,11 +50,10 @@ std::vector<Message> EnemyManager::onInputEvent(sf::Event event) {
 	}
 	else{
 		messages = activeTarget->onInputEvent(event);
-	}
-
-	for (int i = 0; i < messages.size(); i++) {
-		if (messages[i].type == destroy_self && messages[i].caller == activeTarget) {
-			activeTarget = NULL;
+		for (int i = 0; i < messages.size(); i++) {
+			if (messages[i].type == typed_word) {
+				activeTarget == NULL;
+			}
 		}
 	}
 	return messages;

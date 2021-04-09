@@ -5,6 +5,7 @@ enum messageType {
 	typed_word,
 	get_shot_by_ship,
 	arrived_at_target,
+	arrived_at_target_node,
 	create_node,
 	move_back,
 	key_hit,

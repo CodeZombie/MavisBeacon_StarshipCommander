@@ -7,6 +7,7 @@ public:
 	std::vector<Message> update(float dt, float runtime);
 	Node* source;
 	Node* target;
+	glm::vec3 sourcePos, targetPos;
 	float startTime = 0;
 };
 

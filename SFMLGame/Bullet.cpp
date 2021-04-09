@@ -3,6 +3,9 @@
 Bullet::Bullet(Node* source, Node* target) {
 	this->source = source;
 	this->target = target;
+	sourcePos = source->getGlobalPosition();
+	targetPos = target->getGlobalPosition();
+	color = glm::vec3(1, 1, 0);
 }
 
 std::vector<Message> Bullet::update(float dt, float runtime) {
@@ -12,19 +15,22 @@ std::vector<Message> Bullet::update(float dt, float runtime) {
 		startTime = runtime;
 	}
 
-	if (runtime >= startTime + 500) {
-		target->destroy();
+	color = glm::vec3(1, 1, 0) * (1 -(runtime - startTime) / 250.f);
 
-		// Message: Create explosion at Target
-
+	if (runtime >= startTime + 250) {
 		Message m = Message();
-		m.caller = this;
+		m.caller = target;
+		m.type = explode;
+		messages.push_back(m);
+
+		m = Message();
+		m.caller = target;
 		m.type = destroy_self;
 		messages.push_back(m);
 
 		m = Message();
-		m.caller = source;
-		m.type = move_back;
+		m.caller = this;
+		m.type = destroy_self;
 		messages.push_back(m);
 	}
 
@@ -51,16 +57,16 @@ void Bullet::draw(glm::mat4 parentModel) {
 		
 		glBegin(GL_LINES);
 		for (int i = 0; i < 32; i++) {
-			glm::vec3 col = MathHelper::getRandomDirectionVector();
-			glColor3f(col.x, col.y, col.z);
+
+			glColor3f(color.x, color.y, color.z);
 			glVertex3f(
-				source->getGlobalPosition().x + MathHelper::getRandomRange(-.5, .5), 
-				source->getGlobalPosition().y + MathHelper::getRandomRange(-.5, .5), 
-				source->getGlobalPosition().z + MathHelper::getRandomRange(-.5, .5));
+				sourcePos.x + MathHelper::getRandomRange(-.5, .5),
+				sourcePos.y + MathHelper::getRandomRange(-.5, .5),
+				sourcePos.z + MathHelper::getRandomRange(-.5, .5));
 			glVertex3f(
-				target->getGlobalPosition().x + MathHelper::getRandomRange(-.5, .5), 
-				target->getGlobalPosition().y + MathHelper::getRandomRange(-.5, .5), 
-				target->getGlobalPosition().z + MathHelper::getRandomRange(-.5, .5));
+				targetPos.x + MathHelper::getRandomRange(-.5, .5), 
+				targetPos.y + MathHelper::getRandomRange(-.5, .5),
+				targetPos.z + MathHelper::getRandomRange(-.5, .5));
 		}
 		glEnd();
 	}

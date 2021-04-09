@@ -29,12 +29,16 @@ void Node::destroy() {
 	toBeDestroyed = true;
 }
 
-void Node::setTargetPosition(glm::vec3 targetPosition) {
-	std::cout << position.x << ", " << position.y << ", " << position.z << std::endl;
-	this->initialPosition = position;
-	this->targetPosition = targetPosition;
-	this->targetDistance = 0;
-	this->moveToTarget = true;
+void Node::addTargetPosition(glm::vec3 targetPosition) {
+	targetPositions.push_back(targetPosition);
+}
+
+bool Node::moveTowardPoint(glm::vec3 point, float dt) {
+	float distance = glm::length(point - position);
+	if (distance > 0.5f) {
+		position += glm::normalize(point - position) * speed * dt;
+	}
+	return distance < 0.5f;
 }
 
 /*
@@ -137,13 +141,19 @@ std::vector<Message> Node::update(float dt, float runtime) {
 		std::vector<Message> messages = child->update(dt, runtime);
 		outputMessages.insert(outputMessages.end(), messages.begin(), messages.end());
 	}
-	if (moveToTarget) {
-		targetDistance += speed * dt / 3;
-		position.x = MathHelper::smoothstep(initialPosition.x, targetPosition.x, targetDistance);
-		position.y = MathHelper::smoothstep(initialPosition.y, targetPosition.y, targetDistance);
-		position.z = MathHelper::smoothstep(initialPosition.z, targetPosition.z, targetDistance);
-		if (targetDistance >= 1.f) {
+	if (targetPositions.size() > 0) {
+		if (!moveToTarget) {
+			initialPosition = position;
+			targetDistance = 0;
+			moveToTarget = true;
+		}
+		targetDistance += speed * dt;
+		position.x = MathHelper::smoothstep(initialPosition.x, targetPositions[0].x, targetDistance);
+		position.y = MathHelper::smoothstep(initialPosition.y, targetPositions[0].y, targetDistance);
+		position.z = MathHelper::smoothstep(initialPosition.z, targetPositions[0].z, targetDistance);
+		if (targetDistance >= 1.0f) {
 			moveToTarget = false;
+			targetPositions.erase(targetPositions.begin());
 			Message m = Message();
 			m.caller = this;
 			m.type = arrived_at_target;

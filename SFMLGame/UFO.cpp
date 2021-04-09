@@ -58,20 +58,11 @@ std::vector<Message> UFO::onInputEvent(sf::Event event) {
 			m.caller = this;
 			m.type = key_hit;
 			messages.push_back(m);
-			if (wordCursor >= word.size()) {
-				Message m = Message();
-				m.caller = this;
-				m.type = get_shot_by_ship;
-				messages.push_back(m);
 
+			if (wordCursor >= word.size()) {
 				m = Message();
 				m.caller = this;
 				m.type = typed_word;
-				messages.push_back(m);
-
-				m = Message();
-				m.caller = this;
-				m.type = explode;
 				messages.push_back(m);
 			}
 

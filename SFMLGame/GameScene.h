@@ -5,6 +5,7 @@
 #include "EnemyManager.h"
 #include "Space.h"
 #include "Bullet.h"
+#include "GameState.h"
 class GameScene :public Node {
 public:
 	GameScene();
@@ -13,7 +14,9 @@ public:
 	std::vector<Message> handleMessages(std::vector<Message> messages);
 
 private:
+	std::vector<Node*> toBeShot;
 	PlayerShip* playerShip;
 	EnemyManager* enemyManager;
+	GameState gameState;
 };
 

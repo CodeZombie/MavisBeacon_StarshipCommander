@@ -2,7 +2,6 @@
 GameScene::GameScene() {
 	//set up camera
 	Camera::initialize(sf::Vector3f(0, 4, 24.f), sf::Vector3f(0, 12.f, 0.f));
-	
 
 	//add necessary children
 	playerShip = new PlayerShip();
@@ -40,18 +39,15 @@ std::vector<Message> GameScene::handleMessages(std::vector<Message> messages) {
 			destroyChild(messages[i].caller);
 		}
 
-		if (messages[i].type == get_shot_by_ship) {
-			playerShip->shootTarget(messages[i].caller);
-		}
-
 		if (messages[i].type == shoot) {
 			std::cout << "CREATE BULLET" << std::endl;
+			
+		}
+
+		if (messages[i].type == arrived_at_target_node) {
 			addChild(new Bullet(messages[i].caller, messages[i].other));
 		}
 
-		if (messages[i].type == move_back) {
-			messages[i].caller->setTargetPosition(glm::vec3(0, 0, 0));
-		}
 
 		if (messages[i].type == key_hit) {
 			std::cout << "Hit Key" << std::endl;
@@ -63,10 +59,32 @@ std::vector<Message> GameScene::handleMessages(std::vector<Message> messages) {
 
 		if (messages[i].type == typed_word) {
 			std::cout << "Typed word!" << std::endl;
+			enemyManager->activeTarget = NULL;
+			playerShip->shootTarget(messages[i].caller);	
+		}
+
+		if (messages[i].type == add_particle) {
+			addChild(messages[i].other);
 		}
 
 		if (messages[i].type == explode) {
-
+			std::vector<glm::vec3> c;
+			c.push_back(glm::vec3(1, 1, 1));
+			c.push_back(glm::vec3(1, 1, 0));
+			c.push_back(glm::vec3(1, 0, 0));
+			c.push_back(glm::vec3(0, 0, 0));
+			addChild(new ParticleEmitter(
+				messages[i].caller->getGlobalPosition(), 
+				ResourceManager::getModel("particle_star"), 
+				true,			//random direction
+				glm::vec3(0),	//direction
+				c,				//color vector
+				500.f,			//particle lifetime 
+				1,			//emitter lifetime
+				glm::vec2(12, 45),				//particle speed
+				500.f,				//emission interval
+				64,			//initial amount
+				glm::vec2(.5,1.25))); //scale range			
 		}
 
 		if (messages[i].type == add_particle) {
