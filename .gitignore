@@ -75,7 +75,7 @@ StyleCopReport.xml
 *.ilk
 *.meta
 *.obj
-!models/*.obj
+!*/models/*.obj
 *.iobj
 *.pch
 *.pdb
