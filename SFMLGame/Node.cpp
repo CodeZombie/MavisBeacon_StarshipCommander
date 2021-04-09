@@ -35,10 +35,10 @@ void Node::addTargetPosition(glm::vec3 targetPosition) {
 
 bool Node::moveTowardPoint(glm::vec3 point, float dt) {
 	float distance = glm::length(point - position);
-	if (distance > 0.5f) {
-		position += glm::normalize(point - position) * speed * dt;
+	if (distance > 0.001f) {
+		position += glm::normalize(point - position) * distance * dt;
 	}
-	return distance < 0.5f;
+	return distance < 0.01f;
 }
 
 /*

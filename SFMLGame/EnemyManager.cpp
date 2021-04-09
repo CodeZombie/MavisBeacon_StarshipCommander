@@ -13,9 +13,9 @@ std::vector<Message> EnemyManager::update(float dt, float runtime) {
 }
 
 void EnemyManager::createEnemies() {
-	createEnemy("a", glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
-	createEnemy("b", glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
-	createEnemy("c", glm::vec3(0, 200, -300), glm::vec3(0, 10.f, -12.f));
+	createEnemy("Computer", glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
+	createEnemy("axolotl", glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
+	createEnemy("Good morning!", glm::vec3(0, 200, -300), glm::vec3(0, 10.f, -12.f));
 }
 
 void EnemyManager::createEnemy(std::string word, glm::vec3 startPosition, glm::vec3 targetPosition) {

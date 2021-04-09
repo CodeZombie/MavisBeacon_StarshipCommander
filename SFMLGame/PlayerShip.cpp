@@ -17,6 +17,7 @@ PlayerShip::PlayerShip() : Node3D(ResourceManager::getModel("player_ship")) {
 std::vector<Message> PlayerShip::update(float dt, float runtime) {
 	std::vector<Message> messages = __super::update(dt, runtime);
 	if (targetPositions.size() == 0) {
+		moveTowardPoint(glm::vec3(position.x, sin(runtime / 2000) * 2, position.z), dt);
 		//position.y = sin(runtime / 2000) * 2;
 	}
 
