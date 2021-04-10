@@ -59,7 +59,7 @@ std::vector<Message> GameScene::handleMessages(std::vector<Message> messages) {
 
 		if (messages[i].type == typed_word) {
 			std::cout << "Typed word!" << std::endl;
-			enemyManager->activeTarget = NULL;
+			//enemyManager->activeTarget = NULL;
 			playerShip->shootTarget(messages[i].caller);	
 		}
 

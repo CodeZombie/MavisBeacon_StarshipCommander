@@ -14,5 +14,7 @@ enum messageType {
 	add_particle,
 	destroy_self,
 	explode,
-	shoot
+	shoot,
+	stage_started,
+	stage_finished,
 };

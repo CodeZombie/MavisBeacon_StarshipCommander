@@ -186,6 +186,7 @@
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Dictionary.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameState.h" />

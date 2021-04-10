@@ -8,14 +8,19 @@ std::vector<Message> EnemyManager::update(float dt, float runtime) {
 	std::vector<Message> messages = __super::update(dt, runtime);
 	if (children.size() == 0) {
 		createEnemies();
+		Message m = Message();
+		m.caller = this;
+		m.type = stage_started;
+		messages.push_back(m);
 	}
 	return messages;
 }
 
 void EnemyManager::createEnemies() {
-	createEnemy("Computer", glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
-	createEnemy("axolotl", glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
-	createEnemy("Good morning!", glm::vec3(0, 200, -300), glm::vec3(0, 10.f, -12.f));
+	std::vector<std::string> words = Dictionary::getWords(7, 3);
+	createEnemy(words[0], glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
+	createEnemy(words[1], glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
+	createEnemy(words[2], glm::vec3(0, 200, -300), glm::vec3(0, 10.f, -12.f));
 }
 
 void EnemyManager::createEnemy(std::string word, glm::vec3 startPosition, glm::vec3 targetPosition) {
@@ -33,8 +38,8 @@ std::vector<Message> EnemyManager::onInputEvent(sf::Event event) {
 	//if a child is destroyed, we set activeNode back to null
 
 	std::vector<Message> messages;
-
-	if (activeTarget == NULL) {						//theres no current active target
+	
+	if (!activeTarget) {						//theres no current active target
 		bool hit = false;
 		messages = __super::onInputEvent(event);			//forward the key event to all children.
 		for (int i = 0; i < messages.size(); i++) {		//cycle through the recieved messages...
@@ -52,7 +57,9 @@ std::vector<Message> EnemyManager::onInputEvent(sf::Event event) {
 		messages = activeTarget->onInputEvent(event);
 		for (int i = 0; i < messages.size(); i++) {
 			if (messages[i].type == typed_word) {
-				activeTarget == NULL;
+				std::cout << "EEEEEEEEEEEEE" << std::endl;
+				activeTarget = nullptr;
+				break;
 			}
 		}
 	}

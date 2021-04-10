@@ -1,6 +1,7 @@
 #pragma once
 #include "Node.h"
 #include "UFO.h"
+#include "Dictionary.h"
 #include "UserInterface.h"
 //this class ensures there are only a set number of enemies in the scene at a given time.
 //manages their behaviour
