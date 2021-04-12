@@ -14,7 +14,7 @@ void StarField::draw(glm::mat4 parentModel) {
 	glMultMatrixf(glm::value_ptr(mm)); //Apply the model matrix (including this model's parent's matrix)
 	glPointSize(2);
 	glBegin(GL_POINTS);
-	glColor3f(1,1,1);
+	glColor3f(1,5,1);
 	for (int i = 0; i < stars.size(); i++) {
 		glVertex3f(stars[i].x, stars[i].y, stars[i].z);
 	}

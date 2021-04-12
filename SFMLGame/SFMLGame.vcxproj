@@ -165,6 +165,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="HealthPickup.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Node.cpp" />
@@ -178,9 +179,11 @@
     <ClCompile Include="Space.cpp" />
     <ClCompile Include="Spline.cpp" />
     <ClCompile Include="StarField.cpp" />
+    <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="TestShape.cpp" />
     <ClCompile Include="UFO.cpp" />
-    <ClCompile Include="UserInterface.cpp" />
+    <ClCompile Include="GameUserInterface.cpp" />
+    <ClCompile Include="WordAsteroid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asteroid.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="HealthPickup.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageTypes.h" />
@@ -207,9 +211,11 @@
     <ClInclude Include="Space.h" />
     <ClInclude Include="Spline.h" />
     <ClInclude Include="StarField.h" />
+    <ClInclude Include="StartScreen.h" />
     <ClInclude Include="TestShape.h" />
     <ClInclude Include="UFO.h" />
-    <ClInclude Include="UserInterface.h" />
+    <ClInclude Include="GameUserInterface.h" />
+    <ClInclude Include="WordAsteroid.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

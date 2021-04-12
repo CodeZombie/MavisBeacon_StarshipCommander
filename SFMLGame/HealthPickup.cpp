@@ -1,8 +1,11 @@
-#include "UFO.h"
-UFO::UFO(std::string word) : Node3D(ResourceManager::getModel("ufo")) {
-	rotationAxis = glm::vec3(0, 1.f, 0);
+#include "HealthPickup.h"
+HealthPickup::HealthPickup(std::string word) : Node3D(ResourceManager::getModel("health")) {
+	rotationAxis = MathHelper::getRandomDirectionVector();
+	float s = ((rand() % 10) / 3.f) + 2.f;
+	setScale(glm::vec3(s, s, s));
+	speed = ((rand() % 150) + 15.f);
+
 	this->word = word;
-	speed = 1.1f;
 
 	texts.insert({ "hitText", new sf::Text() });
 	texts["hitText"]->setFont(*ResourceManager::getFont("press_start"));
@@ -19,34 +22,33 @@ UFO::UFO(std::string word) : Node3D(ResourceManager::getModel("ufo")) {
 	texts["unhitText"]->setString(word);
 }
 
-std::vector<Message> UFO::update(float dt, float runtime) {
+std::vector<Message> HealthPickup::update(float dt, float runtime) {
 	std::vector<Message> messages = __super::update(dt, runtime);
-	rotation += 5 * dt;
-	
-	if (moveToTarget == false && moveAlongSpline == false) {
-		//create a new spline for just movin around.
-		moveAlongSpline = true;
-		spline = new Spline();
-		spline->looping = true;
-		spline->points.push_back(position);
-		for (int i = 0; i < 64; i++) {
-			spline->points.push_back(glm::vec3(
-				position.x + (((rand() % 64) / 64.f)*16.f - 4.f),
-				position.y + (((rand() % 64) / 64.f)*16.f - 4.f),
-				position.z + (((rand() % 64) / 64.f)*8.f - 4.f)));
-		}
-	}
+	rotation += 1 * dt;
 
+	position.z += speed * dt;
 	//update text position:
 	glm::vec2 newPos = getScreenPosition();
 	float wholeTextWidth = texts["hitText"]->getLocalBounds().width + texts["unhitText"]->getLocalBounds().width;
 	texts["hitText"]->setPosition(newPos.x - wholeTextWidth / 2, newPos.y);
 	texts["unhitText"]->setPosition(texts["hitText"]->getPosition().x + texts["hitText"]->getLocalBounds().width, newPos.y);
 
+	if (position.z > 0 && wordCursor < word.size()) {
+		Message m = Message();
+		m.type = destroy_self;
+		m.caller = this;
+		messages.push_back(m);
+
+		m = Message();
+		m.type = missed_word;
+		m.caller = this;
+		messages.push_back(m);
+	}
+
 	return messages;
 }
 
-std::vector<Message> UFO::onInputEvent(sf::Event event, float runtime) {
+std::vector<Message> HealthPickup::onInputEvent(sf::Event event, float runtime) {
 	std::vector<Message> messages = __super::onInputEvent(event, runtime);
 	if (wordCursor < word.size()) {
 		if (static_cast<char>(event.text.unicode) == word.at(wordCursor)) {
@@ -64,6 +66,10 @@ std::vector<Message> UFO::onInputEvent(sf::Event event, float runtime) {
 				m.caller = this;
 				m.type = typed_word;
 				messages.push_back(m);
+				m = Message();
+				m.caller = this;
+				m.type = health_pickup;
+				messages.push_back(m);
 			}
 
 		}
@@ -77,6 +83,6 @@ std::vector<Message> UFO::onInputEvent(sf::Event event, float runtime) {
 	return messages;
 }
 
-void UFO::getHurt() {
+void HealthPickup::getHurt() {
 	toBeDestroyed = true;
 }

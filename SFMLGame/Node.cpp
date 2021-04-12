@@ -14,14 +14,12 @@ Node::~Node() {
 	for (const auto& child : children) {
 		delete child;
 	}
-	for (int i = 0; i < texts.size(); i++)
-	{
-		delete texts[i];
+	for (auto const& x : texts) {
+		delete x.second;
 	}
 
-	for (int i = 0; i < rectangles.size(); i++)
-	{
-		delete rectangles[i];
+	for (auto const& x : rectangles) {
+		delete x.second;
 	}
 }
 
@@ -181,10 +179,10 @@ glm::vec3 Node::getGlobalPosition() {
 	return lastParentMatrix * glm::vec4(position, 1.f);
 }
 
-std::vector<Message> Node::onInputEvent(sf::Event event) {
+std::vector<Message> Node::onInputEvent(sf::Event event, float runtime) {
 	std::vector<Message> outputMessages;
 	for (const auto& child : children) {
-		std::vector<Message> messages = child->onInputEvent(event);
+		std::vector<Message> messages = child->onInputEvent(event, runtime);
 		outputMessages.insert(outputMessages.end(), messages.begin(), messages.end());
 	}
 	return outputMessages;
@@ -231,11 +229,15 @@ std::vector<Node*> Node::getAllChildren() {
 
 std::vector<sf::Text*> Node::getTexts() {
 	std::vector<sf::Text*> output;
-	output.insert(output.end(), texts.begin(), texts.end());
-	for (int i = 0; i < children.size(); i++) {
-		std::vector<sf::Text*> childTexts = children[i]->getTexts();
-		output.insert(output.end(), childTexts.begin(), childTexts.end());
+	//output.insert(output.end(), texts.begin(), texts.end());
+	//for (int i = 0; i < children.size(); i++) {
+	//	std::vector<sf::Text*> childTexts = children[i]->getTexts();
+	//	output.insert(output.end(), childTexts.begin(), childTexts.end());
+	//}
+	for (auto const& x : texts) {
+		output.push_back(x.second);
 	}
+
 	return output;
 }
 
@@ -243,10 +245,16 @@ void Node::draw2dElements(sf::RenderWindow* window) {
 	for (const auto& child : children) {
 		child->draw2dElements(window);
 	}
-	for (int i = 0; i < texts.size(); i++) {
-		window->draw(*texts[i]);
+	
+	for (auto const& x : texts) {
+		window->draw(*(x.second));
 	}
-	for (int i = 0; i < rectangles.size(); i++) {
-		window->draw(*rectangles[i]);
+
+	for (auto const& x : rectangles) {
+		window->draw(*(x.second));
 	}
+}
+
+void Node::getHurt() {
+
 }

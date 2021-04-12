@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
+#include <random>
 class MathHelper {
 public:
 	inline static glm::vec3 getRandomDirectionVector() {
@@ -14,6 +15,13 @@ public:
 	inline static float getRandomRange(float low, float high) {
 		float randNormal = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		return low + (randNormal * (high - low));
+	}
+
+	inline static int randomRange(int low, int high) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distr(low, high);
+		return distr(gen);
 	}
 
 	inline static float lerp(float a, float b, float f){

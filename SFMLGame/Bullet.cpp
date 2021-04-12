@@ -23,10 +23,10 @@ std::vector<Message> Bullet::update(float dt, float runtime) {
 		m.type = explode;
 		messages.push_back(m);
 
-		m = Message();
+		/*m = Message();
 		m.caller = target;
 		m.type = destroy_self;
-		messages.push_back(m);
+		messages.push_back(m);*/
 
 		m = Message();
 		m.caller = this;

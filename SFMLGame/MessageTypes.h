@@ -17,4 +17,9 @@ enum messageType {
 	shoot,
 	stage_started,
 	stage_finished,
+	shoot_player,
+	press_start,
+	hurt_player,
+	missed_word,
+	health_pickup
 };

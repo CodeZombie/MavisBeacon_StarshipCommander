@@ -1,5 +1,8 @@
 #pragma once
 enum GameState {
-	st_idle,
-	st_shoot_enemy,
+	alien_one,
+	alien_two,
+	asteroid_one,
+	asteroid_two,
+	boss,
 };

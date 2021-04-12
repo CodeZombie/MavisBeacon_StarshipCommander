@@ -33,13 +33,14 @@ protected:
 
 	glm::vec3 initialPosition;
 	float targetDistance;
-	std::vector<sf::Text*> texts;
-	std::vector<sf::RectangleShape*> rectangles;
+	std::map<std::string, sf::Text*> texts;
+	std::map<std::string, sf::RectangleShape*> rectangles;
 
 	bool toBeDestroyed = false;
 public:
 	Node();
 	virtual ~Node();
+	virtual void getHurt();
 	glm::vec3 color;
 	NodeType nodeType;
 	Spline* spline;
@@ -62,7 +63,7 @@ public:
 	float getOpacity();
 	virtual void draw(glm::mat4 parentModel);
 	virtual std::vector<Message> update(float dt, float runtime);
-	virtual std::vector<Message> onInputEvent(sf::Event event);
+	virtual std::vector<Message> onInputEvent(sf::Event event, float runtime);
 	std::vector<Message> checkCollisionGroup(std::vector<Node*> others);
 	std::vector<Message> checkCollision(Node* other);
 

@@ -58,3 +58,7 @@ void PlayerShip::draw(glm::mat4 parentModel) {
 void PlayerShip::shootTarget(Node* target) {
 	targetNodes.push_back(target);
 }
+
+void PlayerShip::getHurt() {
+	health -= 10;
+}

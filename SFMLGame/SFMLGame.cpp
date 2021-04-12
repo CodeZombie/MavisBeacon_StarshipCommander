@@ -6,7 +6,8 @@
 #include "Message.h"
 #include<string>
 #include "GameScene.h"
-#include "UserInterface.h"
+#include "GameUserInterface.h"
+#include "StartScreen.h"
 #include <string>
 
 Node* activeNode;
@@ -56,8 +57,9 @@ int main()
 	ResourceManager::addModel("models/asteroid_a.obj", "asteroid.png", "asteroid");
 	ResourceManager::addModel("models/planet.obj", "planet.png", "planet");
 	ResourceManager::addModel("models/plasma_billboard.obj", "space_plasma.png", "plasma");
+	ResourceManager::addModel("models/health.obj", "health.png", "health");
 	//initialize game director
-	activeNode = new GameScene();
+	activeNode = new StartScreen();//new GameScene();
 
 	//start clocks
 	sf::Clock Clock;
@@ -65,6 +67,11 @@ int main()
 	// Start game loop 
 	while (window.isOpen())
 	{
+		std::vector<Message> messages;
+
+		float runtime = runtimeClock.getElapsedTime().asMilliseconds();
+		float dt = Clock.restart().asSeconds(); //calculate delta time.
+
 		//Handle some non-entity specific inputs:
 		sf::Event Event;
 		while (window.pollEvent(Event))
@@ -77,7 +84,8 @@ int main()
 				glViewport(0, 0, Event.size.width, Event.size.height);
 			}
 			if (Event.type == sf::Event::TextEntered) {
-				activeNode->onInputEvent(Event);
+				std::vector<Message> inputMessages = activeNode->onInputEvent(Event, runtime);
+				messages.insert(messages.end(), inputMessages.begin(), inputMessages.end());
 			}
 			if (Event.type == sf::Event::Closed)
 				window.close();
@@ -85,10 +93,10 @@ int main()
 				window.close();
 		}
 
-		float dt = Clock.restart().asSeconds(); //calculate delta time.
-
 		
-		activeNode->update(dt, runtimeClock.getElapsedTime().asMilliseconds());
+		std::vector<Message> updateMessages = activeNode->update(dt, runtime);
+		messages.insert(messages.end(), updateMessages.begin(), updateMessages.end());
+
 		//std::cout << 1/dt << std::endl;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -102,6 +110,13 @@ int main()
 		activeNode->draw2dElements(&window);
 		window.popGLStates();
 		window.display();
+
+		for (int i = 0; i < messages.size(); i++) {
+			if (messages[i].type == press_start) {
+				delete activeNode;
+				activeNode = new GameScene();
+			}
+		}
 
 
 	}

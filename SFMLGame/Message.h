@@ -9,4 +9,5 @@ public:
 	messageType type;
 	Node* caller;
 	Node* other;
+	float value;
 };

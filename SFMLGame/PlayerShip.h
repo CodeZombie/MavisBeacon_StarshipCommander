@@ -13,6 +13,8 @@ public:
 	glm::vec3 targetNodeStartPosition;
 	float targetNodeDistance;
 	std::vector<Node*> targetNodes;
+	void getHurt();
+	float health = 100;
 private:
 };
 

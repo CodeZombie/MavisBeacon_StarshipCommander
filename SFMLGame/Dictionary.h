@@ -5,7 +5,7 @@ class Dictionary {
 public:
 	inline static std::vector<std::string> getWords(int length, int number_of_words) {
 
-	std::string words[23][7][6] = {
+		std::string words[23][7][6] = {
 {
 	{"access", "author", "around", "action", "august", "always" },
 	{"address", "account", "another", "article", "against", "america" },
@@ -186,5 +186,18 @@ public:
 			w.push_back(words[letter][length][rand() % 5]);
 		}
 		return w;
+	}
+
+	inline static std::string getRandomText() {
+		std::vector<std::string> sentences = {
+			"A poor sports punishment is always self-inflicted.",
+			"It is simply more pleasant to be pissed off.",
+			"No, this sentence was not computer-generated",
+			"Is it blissful?",
+			"You drop that pitch-black pall.",
+			"To propel your national machines.",
+		};
+
+		return sentences[rand() % sentences.size()];
 	}
 };
