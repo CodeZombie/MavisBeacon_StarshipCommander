@@ -48,6 +48,13 @@ std::vector<Message> PlayerShip::update(float dt, float runtime) {
 
 	}
 
+	if (health <= 0) {
+		Message m = Message();
+		m.type = end_game;
+		m.caller = this;
+		messages.push_back(m);
+	}
+
 	return messages;
 }
 

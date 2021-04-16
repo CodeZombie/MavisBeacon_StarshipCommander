@@ -1,4 +1,6 @@
 #include "GameScene.h"
+#include "Boss.h"
+
 GameScene::GameScene() {
 	//set up camera
 	Camera::initialize(sf::Vector3f(0, 4, 24.f), sf::Vector3f(0, 12.f, 0.f));
@@ -8,9 +10,8 @@ GameScene::GameScene() {
 	addChild(playerShip);
 
 	enemyManager = new EnemyManager();
-	enemyManager->state = asteroid_one;
 	addChild(enemyManager);
-	addChild(new Space());
+	addChild(new Space(false));
 	userInterface = new GameUserInterface();
 	addChild(userInterface);
 }
@@ -46,6 +47,10 @@ std::vector<Message> GameScene::handleMessages(std::vector<Message> messages) {
 			addChild(new Bullet(messages[i].caller, messages[i].other));
 		}
 
+		if (messages[i].type == health_pickup) {
+			playerShip->health += 25;
+			userInterface->setHealth(playerShip->health);
+		}
 
 		if (messages[i].type == shoot_player) {
 			addChild(new Bullet(messages[i].caller, playerShip));
@@ -62,21 +67,18 @@ std::vector<Message> GameScene::handleMessages(std::vector<Message> messages) {
 			float cpm = (charactersTypedDuringStage - errorsTypedDuringStage) / (messages[i].value / 1000.f / 60.f);
 
 			std::cout << "Stages completed: " << stagesCompleted << std::endl;
+			std::cout << "MessagesValue: " << messages[i].value << std::endl;
+			std::cout << "chartypes: " << charactersTypedDuringStage << " errtype: " << errorsTypedDuringStage << std::endl;
 			std::cout << "stage time: " << (messages[i].value / 1000.f / 60.f) << std::endl;
 			std::cout << "CPM: " << cpm << std::endl;
-			if (stagesCompleted == 0) {
-				averageCPM = cpm;
-			}
-			else {
-				averageCPM = (averageCPM + cpm) / 2.f;
-			}
+			averageCPM = cpm;
 			userInterface->setCPM(floor(averageCPM));
 			
 			charactersTypedDuringStage = 0;
 			errorsTypedDuringStage = 0;
 			stagesCompleted++;
 			
-			if (stagesCompleted > 4) {
+			if (stagesCompleted > 2) {
 				if (enemyManager->state == alien_one && averageCPM > 250) {
 					//delete enemy manager and make one with the harder aliens.
 					enemyManager->state = alien_two;
@@ -86,8 +88,17 @@ std::vector<Message> GameScene::handleMessages(std::vector<Message> messages) {
 					enemyManager->state = asteroid_one;
 					stagesCompleted = 0;
 				}
-				else if (enemyManager->state == asteroid_one && averageCPM > 300) {
-					//delete enemy manager and make the asteroid manager
+				else if (enemyManager->state == asteroid_one && averageCPM > 250) {
+					enemyManager->state = asteroid_two;
+					stagesCompleted = 0;
+				}
+				else if (enemyManager->state == asteroid_two && averageCPM > 250) {
+					enemyManager->state = boss;
+					stagesCompleted = 0;
+				}
+				else if (enemyManager->state == boss && averageCPM > 250) {
+					enemyManager->state = alien_one;
+					stagesCompleted = 0;
 				}
 				
 			}

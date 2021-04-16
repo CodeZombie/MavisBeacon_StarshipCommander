@@ -23,7 +23,7 @@ GameUserInterface::GameUserInterface() : Node() {
 	texts.insert({ "health", healthText });
 }
 
-void GameUserInterface::setCPM(int cpm) {
+void GameUserInterface::setCPM(float cpm) {
 	averageCPM = cpm;
 	texts["score"]->setString(std::to_string(cpm));
 }

@@ -7,7 +7,8 @@
 class Space : public Node
 {
 public:
-	Space();
+	Space(bool asteroids);
 	std::vector<Message> update(float dt, float runtime);
+	bool asteroids;
 };
 

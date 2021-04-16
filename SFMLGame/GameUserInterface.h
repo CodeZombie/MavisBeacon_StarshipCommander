@@ -11,7 +11,7 @@ class GameUserInterface : public Node
 public:
 	GameUserInterface();
 	std::vector<Message> update(float dt, float runtime);
-	void setCPM(int cpm);
+	void setCPM(float cpm);
 	void setHealth(int h);
 	int averageCPM;
 	int health;

@@ -2,6 +2,7 @@
 
 std::map<std::string, Model*> ResourceManager::models;
 std::map<std::string, sf::Font> ResourceManager::fonts;
+
 void ResourceManager::addModel(std::string model_filename, std::string texture_filename, std::string id) {
 	Model* m = new Model(model_filename, texture_filename);
 	ResourceManager::models.insert({id, m});

@@ -21,5 +21,6 @@ enum messageType {
 	press_start,
 	hurt_player,
 	missed_word,
-	health_pickup
+	health_pickup,
+	end_game
 };

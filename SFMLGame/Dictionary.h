@@ -196,6 +196,16 @@ public:
 			"Is it blissful?",
 			"You drop that pitch-black pall.",
 			"To propel your national machines.",
+			"Space is pretty cool!",
+			"The stranger officiates the meal.",
+			"Toddlers feeding raccoons",
+			"he started to believe in ghosts",
+			"She saw no irony asking me to change.",
+			"My dentist is disappointed with me.",
+			"He turned in the research paper on Friday",
+			"When nobody is around, the trees make sound.",
+			"She looked at the masterpiece"
+
 		};
 
 		return sentences[rand() % sentences.size()];

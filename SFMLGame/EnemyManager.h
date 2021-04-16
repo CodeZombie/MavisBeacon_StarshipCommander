@@ -5,6 +5,8 @@
 #include "GameState.h"
 #include "WordAsteroid.h"
 #include "HealthPickup.h"
+#include "Boss.h"
+
 //this class ensures there are only a set number of enemies in the scene at a given time.
 //manages their behaviour
 enum EnemyManagerState {

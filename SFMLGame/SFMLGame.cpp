@@ -9,7 +9,7 @@
 #include "GameUserInterface.h"
 #include "StartScreen.h"
 #include <string>
-
+#include "DeathScreen.h"
 Node* activeNode;
 
 int main()
@@ -53,11 +53,13 @@ int main()
 	ResourceManager::addFont("PressStart.ttf", "press_start");
 	ResourceManager::addModel("models/StarSparrow01.obj", "StarSparrow_Blue.png", "player_ship");
 	ResourceManager::addModel("models/pyramid.obj", "light_flare_particle.png", "particle_star");
+	ResourceManager::addModel("models/enemy_ship.obj", "enemy_ship.jpg", "enemy_ship");
 	ResourceManager::addModel("models/ufo.obj", "ufo_texture.png", "ufo");
 	ResourceManager::addModel("models/asteroid_a.obj", "asteroid.png", "asteroid");
 	ResourceManager::addModel("models/planet.obj", "planet.png", "planet");
 	ResourceManager::addModel("models/plasma_billboard.obj", "space_plasma.png", "plasma");
 	ResourceManager::addModel("models/health.obj", "health.png", "health");
+
 	//initialize game director
 	activeNode = new StartScreen();//new GameScene();
 
@@ -115,6 +117,10 @@ int main()
 			if (messages[i].type == press_start) {
 				delete activeNode;
 				activeNode = new GameScene();
+			}
+			if (messages[i].type == end_game) {
+				delete activeNode;
+				activeNode = new DeathScreen();
 			}
 		}
 

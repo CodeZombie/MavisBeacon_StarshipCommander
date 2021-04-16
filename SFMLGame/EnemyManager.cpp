@@ -3,6 +3,7 @@
 EnemyManager::EnemyManager() : Node::Node(){
 	stageIntervalTime = 2000;
 	emState = idle;
+	state = alien_one;
 }
 
 std::vector<Message> EnemyManager::update(float dt, float runtime) {
@@ -25,12 +26,16 @@ std::vector<Message> EnemyManager::update(float dt, float runtime) {
 		startStage(runtime);
 		emState = stage_running;
 		shotsThisStage = 2;
+		stageFinishedTime = 0;
+
 	}
 
 	if (livingEnemies == 0) {
-		if(stageFinishedTime == 0 && emState == stage_running){
+		if(emState == stage_running){
+			std::cout << "CALLING STAGE_FINISHED : Runtime: " << runtime << std::endl;
 			stageFinishedTime = runtime;
 			emState = idle;
+
 			Message m = Message();
 			m.caller = this;
 			m.type = stage_finished;
@@ -40,14 +45,16 @@ std::vector<Message> EnemyManager::update(float dt, float runtime) {
 	}
 
 	if (emState == stage_running && runtime > stageStartTime + (shotsThisStage * 5000)) {
-		//pick a random enemy
-		Node* u = children[rand() % children.size()];
-		shotsThisStage++;
-		//have them shoot the player.
-		Message m = Message();
-		m.type = shoot_player;
-		m.caller = u;
-		messages.push_back(m);
+		if (state == alien_one || state == alien_two || asteroid_two) {
+			//pick a random enemy
+			Node* u = children[rand() % children.size()];
+			shotsThisStage++;
+			//have them shoot the player.
+			Message m = Message();
+			m.type = shoot_player;
+			m.caller = u;
+			messages.push_back(m);
+		}
 	}
 
 
@@ -72,20 +79,41 @@ void EnemyManager::startStage(float runtime) {
 		}
 	}
 	else if(state == asteroid_one){
-		std::vector<std::string> words = Dictionary::getWords(MathHelper::randomRange(10, 11), 2);
+		std::vector<std::string> words = Dictionary::getWords(MathHelper::randomRange(10, 11), 4);
 		createAsteroid(words[0], glm::vec3(-200, 150, -600));
 		createAsteroid(words[1], glm::vec3(50, 0, -600));
+		createAsteroid(words[2], glm::vec3(-300, 500, -600));
+		//createAsteroid(words[3], glm::vec3(300, 500, -600));
 	}
-	else if (state == asteroid_one) {
+	else if (state == asteroid_two) {
+		std::vector<std::string> words = Dictionary::getWords(MathHelper::randomRange(9, 11), 6);
+		createAsteroid(words[0], glm::vec3(-200, 150, -600));
+		createAsteroid(words[1], glm::vec3(50, 0, -600));
+		createEnemy(words[2], glm::vec3(100, 200, -64), glm::vec3(-32, 0, -20));
+		createEnemy(words[3], glm::vec3(-100, 200, -64), glm::vec3(32.f, 50.f, -35.f));
+		createEnemy(words[4], glm::vec3(0, 200, -64), glm::vec3(0, 10.f, -12.f));
+		createEnemy(words[5], glm::vec3(-200, 100, -64), glm::vec3(0, 10.f, -12.f));
+	}
+	else if (state == boss) {
+		std::vector<std::string> strings;
+		strings.push_back(Dictionary::getRandomText());
+		strings.push_back(Dictionary::getRandomText());
+		strings.push_back(Dictionary::getRandomText());
+		strings.push_back(Dictionary::getRandomText());
+		Boss* boss = new Boss(strings);
+		boss->setPosition(glm::vec3(100, 200, -205));
+		boss->addTargetPosition(glm::vec3(0,16, -10));
+		addChild(boss);
+		livingEnemies++;
 
 	}
-	std::vector<std::string> w = Dictionary::getWords(1, 1);
-	HealthPickup* hp = new HealthPickup(w[0]);
-	addChild(hp);
-	livingEnemies++;
-	hp->setPosition(glm::vec3(0, 200, -600));
-
-	stageFinishedTime = 0;
+	if (MathHelper::getRandomRange(0, 10) > 9.f) {
+		std::vector<std::string> w = Dictionary::getWords(10, 1);
+		HealthPickup* hp = new HealthPickup(w[0]);
+		addChild(hp);
+		livingEnemies++;
+		hp->setPosition(glm::vec3(0, 200, -600));
+	}	
 	stageStartTime = runtime;
 }
 
